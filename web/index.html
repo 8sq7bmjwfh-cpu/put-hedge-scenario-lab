@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Put 对冲矩阵分析</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="page">
+    <section class="panel panel-form">
+      <h1>Put 对冲参数面板</h1>
+      <p class="sub">本页面仅做情景矩阵分析，不做最优化选点。执行价默认按交易所挂牌挡位生成。</p>
+
+      <h2>组合参数</h2>
+      <div class="grid">
+        <label>标的当前价格 S0
+          <input id="spotIndex" type="number" step="0.01" value="8560.84">
+        </label>
+        <label>头寸金额(元)
+          <input id="portfolioValue" type="number" step="1" value="10000000">
+        </label>
+        <label>组合 Beta
+          <input id="portfolioBeta" type="number" step="0.01" value="1.0">
+        </label>
+        <label>对冲比例
+          <input id="hedgeRatio" type="number" step="0.01" value="1.0">
+        </label>
+        <label>合约乘数
+          <input id="contractMultiplier" type="number" step="1" value="100">
+        </label>
+        <label>对冲方法
+          <select id="hedgeMethod">
+            <option value="notional">名义本金法</option>
+            <option value="delta">Delta 法</option>
+          </select>
+        </label>
+        <label id="deltaWrap" class="hidden">Put 绝对 Delta
+          <input id="putDeltaAbs" type="number" step="0.01" value="0.35">
+        </label>
+      </div>
+
+      <h2>执行价设置（交易所挂牌）</h2>
+      <div class="grid">
+        <label>估值日
+          <input id="valuationDate" type="date">
+        </label>
+        <label>到期月(YYYY-MM)
+          <input id="expiryMonth" type="text" placeholder="例如 2026-05">
+        </label>
+        <label>挂牌挡位深度(ATM±N档)
+          <input id="listingDepth" type="number" step="1" value="12">
+        </label>
+      </div>
+
+      <h2>到期标的价格网格</h2>
+      <div class="grid">
+        <label>到期价格起点
+          <input id="terminalStart" type="number" step="1" value="6800">
+        </label>
+        <label>到期价格终点
+          <input id="terminalStop" type="number" step="1" value="9600">
+        </label>
+        <label>到期价格步长
+          <input id="terminalStep" type="number" step="1" value="100">
+        </label>
+      </div>
+
+      <h2>Put 定价方式</h2>
+      <div class="grid">
+        <label>选择方式
+          <select id="pricingMode">
+            <option value="auto">自动计算(Black-Scholes)</option>
+            <option value="manual_curve">手动曲线(推荐)</option>
+            <option value="manual_flat">手动统一价格</option>
+          </select>
+        </label>
+        <label id="manualFlatWrap" class="hidden">手动统一 Put 价格(点/张)
+          <input id="manualPremium" type="number" step="0.01" value="2600">
+        </label>
+        <label id="volWrap">年化波动率
+          <input id="volatility" type="number" step="0.001" value="0.20">
+        </label>
+        <label id="rfWrap">无风险利率
+          <input id="riskFreeRate" type="number" step="0.001" value="0.015">
+        </label>
+        <label id="divWrap">股息率
+          <input id="dividendYield" type="number" step="0.001" value="0.0">
+        </label>
+        <label id="bsPremiumWrap">BS 溢价率(例如 0.1=10%)
+          <input id="bsPremiumRate" type="number" step="0.001" value="0.0">
+        </label>
+      </div>
+
+      <label id="manualCurveWrap" class="hidden">手动曲线(每行: 执行价,价格点/张)
+        <textarea id="manualCurve" rows="6" placeholder="8000,80&#10;8200,120&#10;8400,180&#10;8600,260&#10;8800,370"></textarea>
+      </label>
+
+      <h2>交易成本</h2>
+      <div class="grid">
+        <label>手续费(元/张)
+          <input id="feePerContract" type="number" step="0.01" value="0">
+        </label>
+        <label>滑点(元/张)
+          <input id="slippagePerContract" type="number" step="0.01" value="0">
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="runBtn" type="button">运行矩阵分析</button>
+      </div>
+      <p id="errorMsg" class="error"></p>
+      <p id="warnMsg" class="sub"></p>
+    </section>
+
+    <section class="panel panel-result">
+      <h2>分析摘要</h2>
+      <div id="summaryCard" class="best-card">尚未运行分析</div>
+
+      <h2>总收益色阶</h2>
+      <div class="legend-block">
+        <div class="legend-bar" id="legendBar"></div>
+        <div class="legend-labels">
+          <span id="legendNeg">低总收益</span>
+          <span>0元</span>
+          <span id="legendPos">高总收益</span>
+        </div>
+      </div>
+
+      <h2>对冲后总收益矩阵 (元)</h2>
+      <p class="sub">横轴为到期标的价格 S_T，纵轴为执行价 K。单元格颜色表示该情境下的对冲后总收益水平，鼠标悬浮可查看详细信息。</p>
+      <div class="table-wrap matrix-wrap">
+        <table id="matrixTable">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <h2>执行价成本摘要</h2>
+      <div class="table-wrap">
+        <table id="strikeInfoTable">
+          <thead>
+            <tr>
+              <th>执行价K</th>
+              <th>Put价格(点/张)</th>
+              <th>合约张数</th>
+              <th>总成本(元)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="matrixTooltip" class="matrix-tooltip hidden" role="status" aria-live="polite"></div>
+  <script src="./app.js"></script>
+</body>
+</html>

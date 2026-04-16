@@ -1,0 +1,273 @@
+:root {
+  --bg: #f8f6ef;
+  --panel: #fffdf8;
+  --ink: #23221d;
+  --muted: #6e6a5f;
+  --line: #d8d1c4;
+  --brand: #165d53;
+  --accent: #bb4d00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  background: radial-gradient(circle at 20% 0%, #f5efe3 0%, #f8f6ef 45%, #efe9dd 100%);
+}
+
+.page {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: minmax(320px, 34vw) minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 10px 24px rgba(32, 28, 18, 0.08);
+}
+
+.panel-form {
+  position: sticky;
+  top: 10px;
+  max-height: calc(100vh - 20px);
+  overflow: auto;
+}
+
+.panel-result {
+  min-width: 0;
+}
+
+h1, h2 {
+  margin: 0 0 10px 0;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+h2 {
+  margin-top: 12px;
+  font-size: 16px;
+}
+
+.sub {
+  margin-top: 0;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+}
+
+input, select, button {
+  width: 100%;
+  font-size: 13px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+textarea {
+  width: 100%;
+  font-size: 13px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+  resize: vertical;
+}
+
+button {
+  cursor: pointer;
+  background: linear-gradient(120deg, #1f7a6e, #15554c);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+}
+
+button:hover {
+  filter: brightness(1.04);
+}
+
+.actions {
+  margin-top: 12px;
+}
+
+.best-card {
+  border: 1px dashed #cbbda8;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fffaf2;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.table-wrap {
+  overflow: auto;
+  max-height: 34vh;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.matrix-wrap {
+  max-height: 64vh;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 620px;
+}
+
+th, td {
+  padding: 6px 7px;
+  border-bottom: 1px solid #ece6db;
+  text-align: right;
+  white-space: nowrap;
+}
+
+th:first-child, td:first-child {
+  text-align: left;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: #f6f1e8;
+  z-index: 1;
+}
+
+#matrixTable {
+  min-width: max-content;
+}
+
+#matrixTable th,
+#matrixTable td {
+  text-align: center;
+  padding: 4px 5px;
+}
+
+#matrixTable .sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: #f6f1e8;
+}
+
+#matrixTable tbody .sticky-col {
+  background: #fffaf2;
+  z-index: 2;
+  font-weight: 700;
+}
+
+.matrix-cell {
+  min-width: 86px;
+  padding: 4px 4px;
+}
+
+.matrix-main {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.matrix-sub {
+  margin-top: 2px;
+  font-size: 10px;
+  line-height: 1.2;
+  opacity: 0.95;
+}
+
+.matrix-tooltip {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  min-width: 220px;
+  max-width: 300px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #cdbfa7;
+  background: rgba(33, 30, 24, 0.95);
+  color: #f7f2e8;
+  font-size: 12px;
+  line-height: 1.45;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+.matrix-tooltip-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.legend-block {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.legend-bar {
+  height: 16px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1a7d62 0%, #f8f2e7 50%, #c14e3f 100%);
+  border: 1px solid #e3d8c6;
+}
+
+.legend-labels {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+svg {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+.error {
+  min-height: 18px;
+  color: #b3271a;
+  font-size: 13px;
+  margin: 8px 0 0 0;
+}
+
+@media (max-width: 1080px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-form {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
